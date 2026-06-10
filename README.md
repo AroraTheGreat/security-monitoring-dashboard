@@ -110,3 +110,17 @@ security-monitoring-dashboard/
         └── datasources/
             └── prometheus.yml
 ```
+
+## Screenshots
+
+### Prometheus - All Targets UP
+![Targets](screenshots/targets.png)
+
+### Alert Rules Loaded
+![Alerts](screenshots/alerts-inactive.png)
+
+### HighFailedLoginRate Alert FIRING
+![Alert Firing](screenshots/alert-firing.png)
+
+### Grafana - Node Exporter Dashboard
+![Grafana](screenshots/grafana-dashboard.png)
