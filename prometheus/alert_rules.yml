@@ -1,0 +1,53 @@
+groups:
+  - name: security_alerts
+    rules:
+
+      # Fires if the security app goes down
+      - alert: ServiceDown
+        expr: up{job="security-app"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Security app is down"
+          description: "The monitored service has been unreachable for over 30 seconds."
+
+      # Fires on high rate of failed login attempts (brute-force signal)
+      - alert: HighFailedLoginRate
+        expr: rate(security_app_failed_logins_total[2m]) > 0.5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High failed login rate detected"
+          description: "More than 0.5 failed logins/sec over 2 minutes — possible brute-force attempt."
+
+      # Fires if suspicious requests spike
+      - alert: SuspiciousRequestSpike
+        expr: rate(security_app_suspicious_requests_total[1m]) > 1
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Suspicious request spike"
+          description: "Unusual request pattern detected — rate exceeds threshold."
+
+      # Fires on high CPU usage on host
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on host"
+          description: "CPU usage has exceeded 80% for over 2 minutes."
+
+      # Fires on low available memory
+      - alert: LowMemory
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 20
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low available memory"
+          description: "Less than 20% of system memory is available."
